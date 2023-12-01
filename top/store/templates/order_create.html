@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="columns is-vcentered">
+        <div class="column">
+            <div class="box">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="title">
+                        Информация для доставки
+                    </div>
+                    {% for field in form %}
+                    <div class="field">
+                        <div class="control">
+                            {{ field }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div class="buttons is-flex">
+                        <button class="button is-success">
+                            Отправить
+                        </button>
+                        <a href="{% url 'store:cart' %}" class="button is-warning">
+                        Назад
+                    </a></div>
+                </form>
+            </div>
+        </div>
+        <div class="column">
+            <div class="box">
+                <div class="title">Информация о заказе</div>
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Продукт</th>
+                            <th>Цена</th>
+                            <th>Колличество</th>
+                            <th>Сумма</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr>
+                            <td>
+                                <img src="{{ item.product.image.url }}" width="50" height="50"> 
+                            </td>
+                            <td>{{ item.product }}</td>
+                            <td>{{ item.product_price }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.total_price }} $</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="title has-text-centered">
+                    Сумма: {{ total_price }} $
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

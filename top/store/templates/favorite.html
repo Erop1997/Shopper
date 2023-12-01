@@ -1,0 +1,62 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="section">
+    <div class="container">
+        <div class="columns is-multiline is-vcentered">
+            {% for product in favorites %}
+            <div class="column is-4">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image">
+                            <a href="{% url 'store:product' product.pk %}">
+                                <img id="prod_img" src="{{ product.image.url }}" alt="">
+                            </a>
+                        </figure>
+                        {% if product.is_new %}
+                        <span class="tag is-danger ml-1">
+                            Новинка!
+                        </span>
+                        {% endif %}
+
+                        {% if product.is_discount %}
+                        <span class="tag is-primary ml-1">
+                            Скидка!
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="card-content">
+                        <div class="media">
+                            <br>
+                            <div class="media-content">
+                                <div class="title is-4">
+                                    <a href="{% url 'store:product' product.pk %}">{{ product }}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="columns is-vcentered">
+                            <div class="column has-text-weight-bold">
+                                {{ product.price }} $
+                            </div>
+                            <div class="column has-text-right">
+                                {% if user.is_authenticated %}
+                                <a href="{% url 'store:favorite' %}?action=favorite&pk={{ product.pk }}">
+                                    <ion-icon
+                                        class="icon is-medium {% if user in product.favorites.all %} has-text-warning {% else %} has-text-grey {% endif %} order"
+                                        name="star"></ion-icon>
+                                </a>
+                                {% endif %}
+                                <a href="{% url 'store:guest_reg' product.pk %}">
+                                    <ion-icon name="cart-outline" class="order icon is-medium"></ion-icon>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

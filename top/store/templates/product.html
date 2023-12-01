@@ -1,0 +1,153 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+<section class="section product-detail">
+    <div class="columns">
+        <div class="column">
+            <a href="{% url 'store:product' product.pk %}">
+                <figure class="image" id="product_image">
+                    <img src="{{ product.image.url }}">
+                </figure>
+            </a>
+        </div>
+        <div class="column is-flex is-flex-direction-column is-justify-content-space-between">
+            <div>
+                <div class="title">
+                    {{ product.name }}
+                    {% if product.is_new %}
+                    <span class="tag is-danger">Новинка!</span>
+                    {% endif %}
+                    {% if product.is_discounted %}
+                    <span class="tag is-primary">Скидка!</span>
+                    {% endif %}
+                </div>
+                <div class="subtitle is-flex mt-4">
+                    <span class="mr-6">0 отзывов</span>
+                    <span class="is-size-4 mx-3">
+                        <a href="#">
+                            <ion-icon name="logo-whatsapp" class="order"></ion-icon>
+                        </a>
+                        <a href="#">
+                            <ion-icon name="logo-youtube" class="order"></ion-icon>
+                        </a>
+                        <a href="#">
+                            <ion-icon name="logo-github" class="order"></ion-icon>
+                        </a>
+                    </span>
+                </div>
+            </div>
+            <div class="columns is-vcentered">
+                <div class="column is-7">
+                    <div class="message">
+                        <div class="message-body">
+                            <div class="title is-5 my-3">Описание</div>
+                            {{ product.description }}
+                        </div>
+                    </div>
+                </div>
+                <div class="column has-text-centered">
+                    <div class="message">
+                        <div class="message-body">
+                            <div class="title">
+                                {{ product.price }} рублей
+                            </div>
+                            <div class="buttons is-centered">
+                                {% if cart_items %}
+                                <a href="{% url 'store:product' product.pk %}?action=add_to_cart"
+                                    class="button is-primary ">
+                                    <ion-icon name="checkmark" class="mr-1"></ion-icon>
+                                    В корзине
+                                </a>
+                                {% else %}
+                                <a href="{% url 'store:product' product.pk %}?action=add_to_cart"
+                                    class="button is-outlined is-dark">
+                                    <ion-icon name="cart" class="mr-1"></ion-icon>
+                                    Добавить в корзину
+                                </a>
+                                {% endif %}
+                                {% if user in product.favorites.all and user.is_authenticated %}
+                                <a href="{% url 'store:product' product.pk %}?action=favorite&pk={{ product.pk }}"
+                                    class="button is-warning has-text-white">Удалить из избранного</a>
+                                {% elif user.is_authenticated %}
+                                <a href="{% url 'store:product' product.pk %}?action=favorite&pk={{ product.pk }}"
+                                    class="button is-outlined is-dark">Добавить в избранное</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if not product.review_set.all %}
+    <div class="title">Отзывов к товару пока нет</div>
+    {% else %}
+    <div class="title ml-4">Отзывы о товаре</div>
+    <div class="colums is-flex">
+        {% for i in product.review_set.all %}
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <div class="media mr-4 mb-4">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <img src="{% static 'uploads/Profile.png' %}">
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">{{ i.customer.first_name }}</p>
+                            <p class="subtitle is-6">@{{ i.customer }}</p>
+                        </div>
+                    </div>
+                    <div class="subtitle is-10">{{i.rating}}/5
+                        <ion-icon class="icon is-small has-text-warning" name="star"></ion-icon>
+                        <span class="ml-3 has-text-grey subtitle">{{ i.date|date:"d.m.y H:i" }}
+                        </span>
+                    </div>
+                    <div class="content is-size-4">
+                        {{ i.text }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% if user.is_authenticated %}
+    <div class="box">
+        <form class="form" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+
+            {% if field.name == 'rating' %}
+            <div class="field">
+                <label for="{{ field.if_for_label }}" class="label">
+                    {{ field.label }}
+                </label>
+                <div class="control">
+                    <div class="select is-link is-rounded">
+                        {{ field }}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="field">
+                <label for="{{ field.if_for_label }}" class="label">
+                    {{ field.label }}
+                </label>
+                <div class="control">
+                    {{ field }}
+                </div>
+            </div>
+            {% endif %}
+
+            {% endfor %}
+            <button class="button is-success">Оставить отзыв</button>
+        </form>
+    </div>
+    {% else %}
+    <div class="subtitle has-text-centered">Чтобы оставить отзыв, <a href="{% url 'users:registration' %}">зарегистрируйтесь</a>, или <a href="{% url 'users:log_in' %}">войдите в аккаунт</a></div>
+    {% endif %}
+</section>
+
+{% endblock %}

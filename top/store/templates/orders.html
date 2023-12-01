@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div class="section">
+    <div class="container is-flex">
+        {% for item in user_orders %}
+        <div class="modal {% if confirm_delete %} is-active {% endif %}">
+            <div class="modal-background"></div>
+            <div class="modal-content">
+                <div class="box has-text-centered">
+                    <div class="title">
+                        Подтвердите удаление
+                    </div>
+                    <a href="{% url 'store:orders' %}?confirm=True&pk={{ delete }}" class="button is-success">
+                        Подтвердить</a>
+                    <a href="{% url 'store:orders' %}" class="button is-danger">Отмена</a>
+                </div>
+            </div>
+            <a href="{% url 'store:orders' %}" class="modal-close is-large"></a>
+        </div>
+        <div class="card ml-4">
+            <div class="box has-text-centered">
+                <div class="subtitle">{{ item }}</div>
+                <div class="subtitle">
+                    {% for product in item.order_products.all %}
+                    <!-- Если продукт последний в списке, то не добвалять запятую -->
+                    {% if item.order_products.last == product %} {{ product }} {% else %} {{ product }}, {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="subtitle">Сумма заказа {{ item.total_price }} $</div>
+                <div class="subtitle">Статус: {{ item.status }}</div>
+                <div class="subtitle">Комментарий к заказу: {{ item.comments }}</div>
+                <a href="{% url 'store:orders' %}?delete={{ item.pk }}" class="mt-3 button is-danger">Отменить заказ</a>
+                <a href="{% url 'store:edit_order' item.pk %}" class="mt-3 button is-warning">Редактировать заказ</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</div>
+
+{% endblock %}

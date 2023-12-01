@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block auth %}
+<div class="columns is-centered mt-3">
+    <div class="column is-4">
+        <div class="box hax-background-info-light">
+            <form method="post" class="has-text-centered">
+                <div class="title is-2 has-text-centered">
+                    Регистрация
+                </div>
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="field">
+                    <label for="{{ field.id_for_label }}">
+                        {{field.label}}
+                    </label>
+                    <div class="control">
+                        {{ field }}
+                    </div>
+                </div>
+                {% endfor %}
+                <button class="button is-link">
+                    Зарегистрироваться 
+                </button>
+                <div class="content mt-4">
+                    <span>Уже зарегистрировались?</span>
+                    <br>
+                    <a href="{% url 'users:log_in' %}">
+                        Войдите в аккаунт
+                    </a>
+                </div>
+                {% if form.errors %}
+                <div class="notification is-info">
+                    <ul>
+                        {% for error in form.errors.values %}
+                        <li>
+                            {{ error }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

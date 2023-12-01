@@ -1,0 +1,101 @@
+{% load static %}
+{% load category %}
+{% load brands %}
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My_Magazine</title>
+  <link rel="stylesheet" href="{% static 'static/bulma.css' %}">
+  <link rel="stylesheet" href="{% static 'static/style.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/css/bulma-carousel.min.css">
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <script src="{% static 'static/script.js' %}" defer></script>
+</head>
+
+<body>
+  {% csrf_token %}
+  <nav class="navbar is-link" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <a href="{% url 'store:home' %}" class="navbar-item ml-3"><ion-icon name="home-outline"></ion-icon></a>
+        {% brands %}
+      </div>
+      <div class="navbar-end">
+        <span class="navbar-item">
+          <form action="/store/home" method="get">
+            <div class="field has-addons mt-4">
+              <input class="input" type="text" name="search" placeholder="Найти товар">
+              <button type="submit" class="button"><ion-icon name="search"></ion-icon></button>
+            </div>
+          </form>
+        </span>
+        <a href="{% url 'store:cart'%}" class="navbar-item">
+          <ion-icon name="cart-outline" class="order has-text-white"></ion-icon>
+          <span class="is-size-6">{{ amount }}</span>
+        </a>
+        {% if user.is_authenticated %}
+        <div class="navbar-item">
+          <div class="dropdown is-hoverable">
+            <div class="dropdown-trigger">
+              <span class="subtitle has-text-white my-3">Добро пожаловать, {{ user }}</span>
+              <div class="icon">
+                <ion-icon name="chevron-down-outline" style="margin-top: 15px;"></ion-icon>
+              </div>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu4" role="menu">
+              <div class="dropdown-content">
+                <div class="dropdown-item">
+                  <a href="{% url 'store:edit_profile' %}" class="dropdown-item">Редактировать профиль</a>
+                </div>
+                <div class="dropdown-item">
+                  <a href="{% url 'store:favorite' %}" class="dropdown-item">Избранное</a>
+                </div>
+                <div class="dropdown-item">
+                  <a href="{% url 'store:orders' %}" class="dropdown-item">Мои заказы</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="navbar-item">
+          <a href="{% url 'users:logout' %}"><ion-icon name="exit-outline"
+              class="icon has-text-white mr-2"></ion-icon></a>
+        </span>
+        {% else %}
+        <span class="navbar-item">
+          <a href="{% url 'users:log_in'%}" class="has-text-white">Войти</a>
+        </span>
+        <span class="navbar-item">
+          <a href="{% url 'users:registration'%}" class="has-text-white">Зарегистрироваться</a>
+        </span>
+        {% endif %}
+  </nav>
+
+  {% block auth %}
+  {% endblock %}
+  {% block slider %}
+  {% endblock %}
+  {% block content %}
+  {% endblock %}
+  <script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/js/bulma-carousel.min.js"></script>
+  <script>
+    bulmaCarousel.attach('#carousel-demo', {
+      slidesToScroll: 1,
+      slidesToShow: 1,
+      infinite: true
+    });
+  </script>
+</body>
+
+</html>
